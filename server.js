@@ -23,7 +23,7 @@ async function init() {
         const answers = await inquirer.prompt(taskList);
         switch (answers.task) {
             case 'View Departments':
-                await viewDepartment();
+                await viewDepartments();
                 break;
             case 'Add Department':
                  await addDepartment();
@@ -32,7 +32,7 @@ async function init() {
                 await deleteDepartment();
                 break;
             case 'View Roles':
-                await viewRole();
+                await viewRoles();
                 break;
             case 'Add Role':
                 await addRole();
@@ -72,7 +72,7 @@ async function init() {
 }
 
 // deplaying departments using db connection
-async function viewDepartment() {
+async function viewDepartments() {
     try {
         const [rows, fields] = await db.promise().query('SELECT * FROM department');
         console.log('Displaying Departments');
@@ -151,6 +151,102 @@ async function deleteDepartment() {
         viewDepartment();
     } catch (error) {
         console.error('deleting unsuccessful', error);
+        init();
+    }
+}
+
+// display roles
+
+async function viewRoles() {
+    try {
+
+        // quering database
+        const [rows, fields] = await db.promise().query('SELECT * FROM role');
+        console.log('Displaying roles');
+        console.table(rows);
+
+        init();
+    } catch (error) {
+        console.error('Error', error);
+
+        init();
+    }
+}
+
+// adding role
+
+async function addRole () {
+    try {
+        const departments = await db.promise().query('SELECT * FROM department');
+        const departmentChoices = departments[0].map(department => ({
+            name: department.name,
+            value: department.id,
+        }));
+
+        const answers = await inquirer.prompt([
+            {
+                type: 'input',
+                name: 'role',
+                message: 'Name of Role?',
+                validate: function (input) {
+                    if(input.trim() === '') {
+                        return 'role cant be empty';
+                    }
+                    return true;
+                },
+            },
+            {
+                type: 'input',
+                name: 'salary',
+                message: 'Salary of Role?',
+                validate: function (input) {
+                    if (isNaN(parsedSalary) || parsedSalary <= 0) {
+                        return 'invalid salary. postive numbers only';
+                    }
+                    return true;
+                },
+            },
+            {
+                type: 'list',
+                name: 'addRoleDepartment',
+                message: 'Department Role belongs to?',
+                choices: departmentChoices,
+            },
+        ]);
+
+        await db.promise().query('INSERT INTO role (title, salary, department_id) VALUES (?,?,?)', [answers.roleName, answers.salary, answers.addRoleDepartment]);
+        console.log( 'Role added ')
+        // displaying roles
+        viewRoles();
+    } catch (error) {
+        console.error('Faile to add role', error);
+        init();
+    }
+}
+
+//  function to delete role
+async function deleteRole (){
+    try {
+        const roles =await db.promise().query('SELECT * FROM role');
+        const roleChooices = roles[0].map(role => ({
+            name: role.title,
+            value: role.id,
+        }));
+
+        const answers = await inquirer.prompt([
+            {
+                type: 'list',
+                name: 'roleId',
+                message: 'which role will be deleted?',
+                choices: roleChooices,
+            }
+        ]);
+// line added to delete role
+        await db.promise().query('DELETE FROM role WHERE id = ?', [answers.roleId]);
+        console.log('Role deleted');
+        viewRoles();
+    } catch (error) {
+        console.error('Cant delete Role',error);
         init();
     }
 }

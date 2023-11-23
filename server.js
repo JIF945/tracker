@@ -72,7 +72,7 @@ async function init() {
     }
 }
 
-// deplaying departments using db connection
+// deplaying departments
 async function viewDepartments() {
     try {
         const [rows, fields] = await db.promise().query('SELECT * FROM department');
@@ -169,12 +169,12 @@ async function viewRoles() {
         init();
     } catch (error) {
         console.error('Error', error);
-
+// main menu
         init();
     }
 }
 
-// adding role
+// adding role function 
 
 async function addRole () {
     try {
@@ -220,7 +220,7 @@ async function addRole () {
         // displaying roles
         viewRoles();
     } catch (error) {
-        console.error('Faile to add role', error);
+        console.error('Failure to add role', error);
         init();
     }
 }
@@ -283,9 +283,9 @@ async function viewEmployees (){
             value: role.id,
         }));
 
-        // manager choices
+        // manager choices array
         const managerChoices = [
-            ...managers[0].map(managers => ({
+            ...managers[0].map(manager => ({
                 name: `${manager.first_name} ${manager.last_name}`,
                 value: manager.id,
             })),
@@ -329,11 +329,40 @@ async function viewEmployees (){
         }
     }
 
+//     fucntion to delete employee
+
+async function deleteEmployee () {
+    try {
+        const employees = await db.promise().query('SELECT * FROM employee');
+        const employeeChoices = employees[0].map(employee => ({
+            name:`${employee.first_name} ${employee.last_name}`,
+            value: employee.id,
+        }))
+
+        const answers = await inquirer.prompt([
+            {
+                type: 'list',
+                name: ' employeeId',
+                message: 'Delete what employee',
+                choices: employeeChoices
+            }
+        ])
+
+        await db.promise().query('DELETE FROM employee WHERE id = ?', [answers.employeeeId]);
+        console.log('employee deleted')
+        viewEmployees();
+    } catch (error) {
+        console.error('error deleteing employing, please try again', error);
+        init();
+    }
+}
+   
+   
     //  function to update an employes's role
 
     async function updateEmployeeRole () {
         try {
-            const employee = await db.promise().query().query('SELECT * FROM employee');
+            const employees = await db.promise().query().query('SELECT * FROM employee');
             const roles = await db.promise().query('SELECT * FROM role ');
 
             const employeeChoices = employees[0].map(employee => ({
@@ -418,4 +447,42 @@ async function updateEmployeeManager (){
     }
 }
 
+// View employee by department 
 
+async function viewEmployeeByDepartment () {
+    try {
+        const [rows, fields] = await db.promise().query(`
+        SELECT d.name AS department, e.first_name e.last_name, r.title AS title
+        FROM employee e
+        JOIN role r ON e.role_id = r.id
+        JOIN department d ON r.department_id = d.id`);
+
+        console.log('Displaying employess by department');
+        console.table(rows);
+        init();
+    } catch (error) {
+        console.error('Error viewing employess by department, please try again', error)
+        init();
+    }
+}
+
+//  view employee manager function
+async function viewEmployeeByManager () {
+    try {
+        const [rows, fields] = await db.promise().query(`
+        SELECT CONCAT( m.first_name, '', m.last_name) AS manager_name, e.first_name, e.last_name, r.title AS title
+        FROM employee e
+        LEFT JOIN employee m ON e. manager_id = m.id
+        JOIN role r on e.role_id = r.id`);
+
+        console.log('Displaying employess by manager ')
+        console.table(rows);
+        init();
+    } catch (error) {
+        console.error('Error viewing employess by manager, please try again', error);
+    }
+}
+
+
+// function to call 
+init ();

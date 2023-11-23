@@ -6,7 +6,7 @@ const db = require('./db/connection');
 
 
 //  import the console table module
-require('console.table');
+// require('console.table');
 
 
 // created array

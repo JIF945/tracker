@@ -106,10 +106,10 @@ async function addDepartment () {
         console.log('Department Added');
 
         // fetch departments after insertion
-        const [department] = await db.promise().query('SELECT * FROM department');
+        const [departments] = await db.promise().query('SELECT * FROM department');
 
         //  list of departments
-        const departmentChoices = department.map(department => department.name);
+        const departmentChoices = departments.map(department => department.name);
 
         //  update task list
         taskList.forEach(task => {
@@ -118,10 +118,39 @@ async function addDepartment () {
             }
         });
 
-        console.table(department);
+        console.table(departments);
         init();
     } catch (error) {
         console.error('Cant add department', error);
+        init();
+    }
+}
+
+
+// Function to delete department
+
+async function deleteDepartment() {
+    try {
+        const departments = await db.promise().query('SELECT * FROM department');
+        const departmentChoices = departments[0].map(department => ({
+            name: department.name,
+            value: department.id,
+        }));
+
+        const answers = await inquirer.prompt([
+            {
+                type: 'list',
+                name: 'departmentId',
+                message: 'select which department to delete',
+                choices: departmentChoices,
+            },
+        ]);
+
+        await db.promise().query('Delete FROM department WHERE id = ?', [answers.departmentId]);
+        console.log('Department deleted');
+        viewDepartment();
+    } catch (error) {
+        console.error('deleting unsuccessful', error);
         init();
     }
 }

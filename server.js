@@ -71,3 +71,57 @@ async function init() {
     }
 }
 
+// deplaying departments using db connection
+async function viewDepartment() {
+    try {
+        const [rows, fields] = await db.promise().query('SELECT * FROM department');
+        console.log('Displaying Departments');
+        console.table(rows);
+        init();
+    } catch (error) {
+        console.error('Cant show departments', error);
+        init();
+    }
+}
+
+//  Add new department with user input and db connection 
+async function addDepartment () {
+    try {
+        const answers = await inquirer.prompt([
+            {
+                type: 'input',
+                name: 'departmentName',
+                message: 'Name of Department?',
+                validate: function (input) {
+                    if (input.trim() === '') {
+                        return 'Department name cant be empty.';
+                    }
+                    return true;
+                },
+            },
+        ]);
+
+// insert department in to database
+        await db.promise().query('INSERT INTO department (name) VALUES (?)', [answers.departmentName]);
+        console.log('Department Added');
+
+        // fetch departments after insertion
+        const [department] = await db.promise().query('SELECT * FROM department');
+
+        //  list of departments
+        const departmentChoices = department.map(department => department.name);
+
+        //  update task list
+        taskList.forEach(task => {
+            if(['Add Role', 'Delete Department', 'Add Employee', 'Update Employee Manager', 'View Employee By Department'].includes(task.name)){
+                task.choices = departmentChoices;
+            }
+        });
+
+        console.table(department);
+        init();
+    } catch (error) {
+        console.error('Cant add department', error);
+        init();
+    }
+}

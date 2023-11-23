@@ -1,5 +1,5 @@
 -- Schema source department 
-INSERT INTO department (name)
+INSERT INTO department (id, department_id)
 VALUES ("Aerospace"),
         ("science"),
         ("Entertainment"),

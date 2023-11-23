@@ -6,7 +6,7 @@ const db = require('./db/connection');
 
 
 //  import the console table module
-// require('console.table');
+require('console.table');
 
 
 // created array
@@ -29,40 +29,25 @@ async function init() {
             case 'Add Department':
                  await addDepartment();
                  break;
-            case 'Delete Department':
-                await deleteDepartment();
-                break;
+           
             case 'View Roles':
                 await viewRoles();
                 break;
             case 'Add Role':
                 await addRole();
                 break;
-            case 'Delete Role':
-                await deleteRole();
-                break;
+            
             case 'View Employees':
                 await viewEmployees();
                 break;
             case 'Add Employee':
                 await addEmployee();
                 break;
-            case 'Delete Employee':
-                await deleteEmployee();
-                break;
+            
             case 'Update Employee Role':
                 await updateEmployeeRole();
                 break;
-            case 'Update Employee Manager':
-                await updateEmployeeManager();
-                break;
-            case 'View Employee By Department':
-                await viewEmployeeByDepartment();
-                break;
-            case 'View Employee By Manager':
-                await viewEmployeeByManager();
-                break;
-                default:
+           
                 console.log('Exiting the application: Bye!');
                 process.exit();
         }
@@ -123,35 +108,6 @@ async function addDepartment () {
         init();
     } catch (error) {
         console.error('Cant add department', error);
-        init();
-    }
-}
-
-
-// Function to delete department
-
-async function deleteDepartment() {
-    try {
-        const departments = await db.promise().query('SELECT * FROM department');
-        const departmentChoices = departments[0].map(department => ({
-            name: department.name,
-            value: department.id,
-        }));
-
-        const answers = await inquirer.prompt([
-            {
-                type: 'list',
-                name: 'departmentId',
-                message: 'select which department to delete',
-                choices: departmentChoices,
-            },
-        ]);
-
-        await db.promise().query('Delete FROM department WHERE id = ?', [answers.departmentId]);
-        console.log('Department deleted');
-        viewDepartment();
-    } catch (error) {
-        console.error('deleting unsuccessful', error);
         init();
     }
 }
@@ -225,32 +181,7 @@ async function addRole () {
     }
 }
 
-//  function to delete role
-async function deleteRole (){
-    try {
-        const roles =await db.promise().query('SELECT * FROM role');
-        const roleChoices = roles[0].map(role => ({
-            name: role.title,
-            value: role.id,
-        }));
 
-        const answers = await inquirer.prompt([
-            {
-                type: 'list',
-                name: 'roleId',
-                message: 'which role will be deleted?',
-                choices: roleChoices,
-            }
-        ]);
-// line added to delete role
-        await db.promise().query('DELETE FROM role WHERE id = ?', [answers.roleId]);
-        console.log('Role deleted');
-        viewRoles();
-    } catch (error) {
-        console.error('Cant delete Role',error);
-        init();
-    }
-}
 
 //  function to view employees
 
@@ -329,35 +260,6 @@ async function viewEmployees (){
         }
     }
 
-//     fucntion to delete employee
-
-async function deleteEmployee () {
-    try {
-        const employees = await db.promise().query('SELECT * FROM employee');
-        const employeeChoices = employees[0].map(employee => ({
-            name:`${employee.first_name} ${employee.last_name}`,
-            value: employee.id,
-        }))
-
-        const answers = await inquirer.prompt([
-            {
-                type: 'list',
-                name: ' employeeId',
-                message: 'Delete what employee',
-                choices: employeeChoices
-            }
-        ])
-
-        await db.promise().query('DELETE FROM employee WHERE id = ?', [answers.employeeeId]);
-        console.log('employee deleted')
-        viewEmployees();
-    } catch (error) {
-        console.error('error deleteing employing, please try again', error);
-        init();
-    }
-}
-   
-   
     //  function to update an employes's role
 
     async function updateEmployeeRole () {
@@ -398,91 +300,7 @@ async function deleteEmployee () {
             init();
         }
     }
-
-    // updating employees manager function 
-
-async function updateEmployeeManager (){
-    try {
-        const employee = await db.promise().query('SELECT * FROM employee');
-        const managers = await db.promise().query('SELECT * FROM employee WHERE manager_id is NULL');
-
-        const employeeChoices = employee[0].map(employee => ({
-            name:  `${employee.first_name} ${employee.last_name}`,
-            value: employee.id,
-        }));
-
-        // managers choices array
-        const managerChoices = [
-            ...managers[0].map(manager => ({
-                name: `${manager.first_name} ${manager.last_name} `,
-                value: manager.id,
-            })),
-            {
-                name: 'None',
-                value: null, 
-            },
-        ];
-
-        const answers = await inquirer.prompt ([
-            {
-                type: 'list',
-                name: 'employeeId',
-                message:'what employee manager would you like to update?',
-                choices: employeeChoices,
-            },
-            {
-                type: 'list',
-                name: 'newManager',
-                message: ' Employees new manager',
-                choices: managerChoices,
-            },
-        ]);
-
-        await db.promise().query ('UPDATE employee SET manager_id = ? WHERE id = ?,', [answers.newManager, answers.employeeId]);
-        console.log('Employees Manager updated');
-        viewEmployees();
-    } catch (error) {
-        console.error('Error updated employess manager, please try again', error);
-        init();
-    }
-}
-
-// View employee by department 
-
-async function viewEmployeeByDepartment () {
-    try {
-        const [rows, fields] = await db.promise().query(`
-        SELECT d.name AS department, e.first_name e.last_name, r.title AS title
-        FROM employee e
-        JOIN role r ON e.role_id = r.id
-        JOIN department d ON r.department_id = d.id`);
-
-        console.log('Displaying employess by department');
-        console.table(rows);
-        init();
-    } catch (error) {
-        console.error('Error viewing employess by department, please try again', error)
-        init();
-    }
-}
-
-//  view employee manager function
-async function viewEmployeeByManager () {
-    try {
-        const [rows, fields] = await db.promise().query(`
-        SELECT CONCAT( m.first_name, '', m.last_name) AS manager_name, e.first_name, e.last_name, r.title AS title
-        FROM employee e
-        LEFT JOIN employee m ON e. manager_id = m.id
-        JOIN role r on e.role_id = r.id`);
-
-        console.log('Displaying employess by manager ')
-        console.table(rows);
-        init();
-    } catch (error) {
-        console.error('Error viewing employess by manager, please try again', error);
-    }
-}
-
+  
 
 // function to call 
 init ();

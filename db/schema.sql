@@ -7,7 +7,7 @@ CREATE DATABASE employees_db;
 
 
 -- table for department
-CREATE TABLE department(
+CREATE TABLE department (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(30) NOT NULL
 );

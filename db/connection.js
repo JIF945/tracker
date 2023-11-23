@@ -1,10 +1,10 @@
 //  import and require mysql
-const mysql= require(mysq12);
+const mysql= require('mysql2');
 
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: '',
+    password: 'jojames315',
     database: 'employees_db'
 })
 

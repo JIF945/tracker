@@ -228,7 +228,7 @@ async function addRole () {
 async function deleteRole (){
     try {
         const roles =await db.promise().query('SELECT * FROM role');
-        const roleChooices = roles[0].map(role => ({
+        const roleChoices = roles[0].map(role => ({
             name: role.title,
             value: role.id,
         }));
@@ -238,7 +238,7 @@ async function deleteRole (){
                 type: 'list',
                 name: 'roleId',
                 message: 'which role will be deleted?',
-                choices: roleChooices,
+                choices: roleChoices,
             }
         ]);
 // line added to delete role
@@ -271,3 +271,100 @@ async function viewEmployees (){
     }
 }
 
+//  function to add new employees
+ async function addEmployee() {
+    try {
+        const roles = await db.promise().query('SELECT * FROM role');
+        const managers = await db.promise().query('SELECT * FROM employee WHERE manager_id IS NULL');
+
+        const roleChoices = roles[0].map(role => ({
+            name: role.title,
+            value: role.id,
+        }));
+
+        // manager choices
+        const managerChoices = [
+            ...managers[0].map(managers => ({
+                name: `${manager.first_name} ${manager.last_name}`,
+                value: manager.id,
+            })),
+            {
+                name: 'None',
+                value: null,
+            },
+        ];
+
+        const answers = await inquirer.prompt([
+            {
+                type: 'input',
+                name: 'firstName',
+                message:' Employess first name?',
+            },
+            {
+                type: 'input',
+                name:'lastName',
+                message:'Employees last_name?',
+            },
+            {
+                type: 'list',
+                name:' employeeRole',
+                message: 'Employess role?',
+                choices: roleChoices,
+            },
+            {
+                type: 'list',
+                name: 'employeeManager',
+                message: 'Employess manager?',
+                choices: managerChoices,
+            },
+        ]);
+
+        const result = await db.promise().query('INSERT INTO employee (first_name, last_name, role_id, manger_id) VALUES (?,?,?)', [answers.first_name, answers.last_name, answers.employeRole, answers.employeManager])
+        console.log('employee added');
+        viewEmployees();
+    } catch (error) {
+        console.error('error adding employee, please try again', error);
+        init();
+        }
+    }
+
+    //  function to update an employes's role
+
+    async function updateEmployeeRole () {
+        try {
+            const employee = await db.promise().query().query('SELECT * FROM employee');
+            const roles = await db.promise().query('SELECT * FROM role ');
+
+            const employeeChoices = employees[0].map(employee => ({
+                name: `${employee.first_name} ${employee.last_name}`,
+                value: employee.id,
+            }));
+
+            const roleChoices = roles[0].map(role => ({
+                name: role.title,
+                value: role.id,
+            }));
+
+            const answers = await inquirer.prompt([
+                {
+                    type: 'list',
+                    name: 'employeeId',
+                    message: ' what employee role do you want to update',
+                    choices: employeeChoices,
+                },
+                {
+                    type: 'list',
+                    name: 'newRole',
+                    message:' Employess new role?',
+                    choices: roleChoices,
+                },
+            ]);
+
+            await db.promise().query('UPDATE employee SET role_id = ? WHERE id = ?', [answers.newRole, answers.employeeId]);
+            console.log('Employee Role updated');
+            viewEmployees();
+        } catch (error) {
+            console.error('error updating employeee role, please try again', error);
+            init();
+        }
+    }

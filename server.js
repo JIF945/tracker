@@ -3,7 +3,7 @@ const inquirer = require('inquirer');
 
 // import and require connection 
 const db = require('./db/connection');
-const { appendFileSync } = require('fs');
+
 
 //  import the console table module
 require('console.table');

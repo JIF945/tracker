@@ -3,6 +3,7 @@ const inquirer = require('inquirer');
 
 // import and require connection 
 const db = require('./db/connection');
+const { appendFileSync } = require('fs');
 
 //  import the console table module
 require('console.table');
@@ -52,8 +53,8 @@ async function init() {
             case 'Update Employee Role':
                 await updateEmployeeRole();
                 break;
-            case 'View Employee Manager':
-                await viewEmployeeManager();
+            case 'Update Employee Manager':
+                await updateEmployeeManager();
                 break;
             case 'View Employee By Department':
                 await viewEmployeeByDepartment();
@@ -368,3 +369,53 @@ async function viewEmployees (){
             init();
         }
     }
+
+    // updating employees manager function 
+
+async function updateEmployeeManager (){
+    try {
+        const employee = await db.promise().query('SELECT * FROM employee');
+        const managers = await db.promise().query('SELECT * FROM employee WHERE manager_id is NULL');
+
+        const employeeChoices = employee[0].map(employee => ({
+            name:  `${employee.first_name} ${employee.last_name}`,
+            value: employee.id,
+        }));
+
+        // managers choices array
+        const managerChoices = [
+            ...managers[0].map(manager => ({
+                name: `${manager.first_name} ${manager.last_name} `,
+                value: manager.id,
+            })),
+            {
+                name: 'None',
+                value: null, 
+            },
+        ];
+
+        const answers = await inquirer.prompt ([
+            {
+                type: 'list',
+                name: 'employeeId',
+                message:'what employee manager would you like to update?',
+                choices: employeeChoices,
+            },
+            {
+                type: 'list',
+                name: 'newManager',
+                message: ' Employees new manager',
+                choices: managerChoices,
+            },
+        ]);
+
+        await db.promise().query ('UPDATE employee SET manager_id = ? WHERE id = ?,', [answers.newManager, answers.employeeId]);
+        console.log('Employees Manager updated');
+        viewEmployees();
+    } catch (error) {
+        console.error('Error updated employess manager, please try again', error);
+        init();
+    }
+}
+
+

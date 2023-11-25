@@ -209,10 +209,10 @@ function addEmployee() {
       },
     },
     {
-      type: "list",
+      type: "input",
       name: "role_id",
-      message: "select the empoyes role:",
-      choices: addRole(role => ({name:role.title, value: role.department_id}))
+      message: "select the employees role:",
+      choices: db.viewAllRoles
     },
     {
       type: "input",
@@ -227,13 +227,13 @@ function addEmployee() {
     }
   ])
     .then((answer) => {
-      const firstName = answer.first_name;
-      const lastName = answer.las_name;
-      const managerid = answer.manager_id;
-      console.log(firstName);
-      console.log(lastName);
-      console.log(managerid);
-      db.query("INSERT INTO Employee ( first_name, last_name, manager_id) VALUES (?,?,?,)",[firstName, lastName, managerid],
+      const first_name = answer.first_name;
+      const last_name = answer.last_name;
+      const manager_id = answer.manager_id;
+      console.log(first_name);
+      console.log(last_name);
+      console.log(manager_id);
+      db.query("INSERT INTO Employee ( first_name, last_name, manager_id) VALUES (?,?,?)",[first_name, last_name, manager_id],
       (err, result) => {
         if (err) {
           console.error ("Enter adding employee", err);

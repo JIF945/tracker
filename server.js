@@ -17,7 +17,7 @@ function init() {
       name: "action",
       type: "list",
       message: "What would you like to do?",
-      choices: ["View All Departments", "Add Departments", "View All Roles", "Add Role", "View All Employees"],
+      choices: ["View All Departments", "Add Departments", "View All Roles", "Add Role", "View All Employees", "Add Employee"],
     })
     // different cases for each answer
     .then((answer) => {
@@ -37,6 +37,8 @@ function init() {
         case "View All Employees":
           viewAllEmployees();
           break;
+        case "Add Employee":
+          addEmployee();
       }
     });
 }
@@ -179,6 +181,16 @@ function viewAllEmployees() {
     console.table(results);
     init(); 
   })
+}
+
+function addEmployee() {
+  try {
+  inquirer.prompt([
+    {
+      type: ""
+    }
+  ])
+  }
 }
 
 init();

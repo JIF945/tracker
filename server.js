@@ -187,9 +187,64 @@ function addEmployee() {
   try {
   inquirer.prompt([
     {
-      type: ""
+      type: "input",
+      name:"first_name",
+      message: " what is the employees first name",
+      validate: function (input) {
+        if (input.trim()=== "") {
+          return "First name can not be blank"
+        }
+          return true;
+      },
+    },
+    {
+      type: "input",
+      name: "last_name",
+      message: " What is the employess last name",
+      validate: function(input) {
+        if (input.trim()=== "") {
+          return " last name cant not be blank"
+        }
+          return true;
+      },
+    },
+    {
+      type: "list",
+      name: "role_id",
+      message: "select the empoyes role:",
+      choices: addRole(role => ({name:role.title, value: role.department_id}))
+    },
+    {
+      type: "input",
+      name: "manager_id",
+      message: " whos the employees new manager",
+      validate: function(input) {
+        if (input.trim()=== ""){
+          return "manager can not be blank"
+        }
+         return true;
+      }
     }
   ])
+    .then((answer) => {
+      const firstName = answer.first_name;
+      const lastName = answer.las_name;
+      const managerid = answer.manager_id;
+      console.log(firstName);
+      console.log(lastName);
+      console.log(managerid);
+      db.query("INSERT INTO Employee ( first_name, last_name, manager_id) VALUES (?,?,?,)",[firstName, lastName, managerid],
+      (err, result) => {
+        if (err) {
+          console.error ("Enter adding employee", err);
+          return;
+        }
+        console.log("employee added");
+        init();
+      });
+    });
+  } catch (error){
+    console.error("Error adding employee", error);
   }
 }
 

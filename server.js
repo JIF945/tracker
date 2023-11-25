@@ -141,12 +141,12 @@ function addRole () {
     ])
     .then((answer) => {
       const title = answer.title;
-      const salary = answer.salary;
       const department_id = answer.department_id;
+      const salary = answer.salary;
       console.log(title);
       console.log(salary);
       console.log(department_id);
-      db.query("INSERT INTO role ( title, department_id, salary) VALUES (?, ?, ?)", [title, department_id, salary]),
+      db.query("INSERT INTO role ( title, department_id, salary) VALUES (?, ?, ?)", [title, department_id, salary],
       (err, result) => {
         if (err) {
           console.error("Enter adding role", err);
@@ -154,7 +154,7 @@ function addRole () {
         }
         console.log("Role Added");
         init();
-      }
+      });
     });
   } catch (error){
     console.error("Error adding role", error);

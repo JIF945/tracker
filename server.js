@@ -69,13 +69,11 @@ function addDepartment() {
       ])
       .then((answer) => {
         const departmentName = answer.departmentName;
-        const departmentId = 4;
         console.log(departmentName);
-        db.query("INSERT INTO department (id, department_name) VALUES (?, ?)", [departmentId,departmentName ]);
+        db.query("INSERT INTO department (department_name) VALUES (?)", [departmentName ]);
         console.log("Department Added");
         init();
       });
-
    
   } catch (error) {
     console.error("Cant add department", error);

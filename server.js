@@ -121,8 +121,9 @@ function addRole () {
       const roleName = answer.roleName;
       const title = answer.title;
       const salary = answer.salary;
+      const departmentid = answer.departmentid
       console.log(roleName);
-      db.query("INSERT INTO role (title),(salary),(department_id)  VALUES (?,?,?)", [roleName], [title], [salary]);
+      db.query("INSERT INTO role (title),(salary),(department_id)  VALUES (?,?,?)", [roleName], [title], [salary], departmentid);
       console.log("Role Added");
       init();
     })

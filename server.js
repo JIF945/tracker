@@ -82,7 +82,7 @@ function addDepartment() {
     console.error("Cant add department", error);
   }
 }
-init();
+// init();
 
 function viewAllRoles() {
   // query to select all roles from the roles table. 

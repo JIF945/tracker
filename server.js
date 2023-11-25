@@ -116,15 +116,53 @@ function addRole () {
           return true;
         },
       },
+      {
+        type: "input",
+        name: 'title',
+        message: " Name of new Title role",
+        validate: function (input) {
+          if (input.trim() === "") {
+            return " New title can not be blank"
+          }
+          return true;
+        }
+      },
+      {
+        type: "input",
+        name: "department_id",
+        message: "What department will the new role be in?",
+        validate: function (input) {
+          if (input.trim() === "") {
+            return " department can not be added"
+          }
+          return true;
+        },
+      },
+      {
+        type: "input",
+        name: "salary",
+        message: " what is the salary for the new role",
+        validate: function (input) {
+          if (input.trim() === "") {
+              return " Salary can not be added"
+          }
+          return true;
+        }
+      }
     ])
     .then((answer) => {
       const roleName = answer.roleName;
       const title = answer.title;
       const salary = answer.salary;
-      const departmentid = answer.departmentid
+      const departmentid = answer.department_id
       console.log(roleName);
-      db.query("INSERT INTO role (title),(salary),(department_id)  VALUES (?,?,?)", [roleName], [title], [salary], departmentid);
+      console.log(title);
+      console.log(salary);
+      console.log(departmentid);
+      db.query("INSERT INTO role ( (roleName) (title), (salary),(department_id), VALUES (?,?,?,?)", [roleName],[title],[departmentid],[salary]);
       console.log("Role Added");
+      console.log("departmentID added")
+      console.log("Salary added")
       init();
     })
   } catch (error){

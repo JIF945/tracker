@@ -229,11 +229,13 @@ function addEmployee() {
     .then((answer) => {
       const first_name = answer.first_name;
       const last_name = answer.last_name;
+      const role_id = answer.role_id;
       const manager_id = answer.manager_id;
       console.log(first_name);
       console.log(last_name);
+      console.log(role_id);
       console.log(manager_id);
-      db.query("INSERT INTO Employee ( first_name, last_name, manager_id) VALUES (?,?,?)",[first_name, last_name, manager_id],
+      db.query("INSERT INTO Employee ( first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)",[first_name, last_name, role_id, manager_id],
       (err, result) => {
         if (err) {
           console.error ("Enter adding employee", err);

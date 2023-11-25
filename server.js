@@ -6,7 +6,7 @@ const mysql = require("mysql2");
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "",
+  password: "jojames315$",
   database: "employee_db",
 });
 
@@ -17,7 +17,7 @@ function init() {
       name: "action",
       type: "list",
       message: "What would you like to do?",
-      choices: ["View all departments", "Add Departments"],
+      choices: ["View all departments", "Add Departments", "View all roles"],
     })
     // different cases for each answer
     .then((answer) => {
@@ -27,6 +27,9 @@ function init() {
           break;
         case "Add Departments":
           addDepartment();
+          break;
+        case "View all roles":
+          viewAllRoles();
           break;
       }
     });
@@ -78,5 +81,21 @@ function addDepartment() {
     console.error("Cant add department", error);
   }
 }
-
 init();
+
+// function viewAllRoles() {
+//   // Query to select all roles from the roles table. 
+//   const query = " SELECT * From role";
+
+//   //  Execute the query 
+//   db.query(query, (err, results) => {
+//      if( err) {
+//       console.error(err);
+//       return
+//      }
+//      console.table(results);
+//      init();
+//   })
+// }
+
+

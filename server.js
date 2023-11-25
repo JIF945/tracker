@@ -107,19 +107,8 @@ function addRole () {
     .prompt([
       {
         type: "input",
-        name: "roleName",
-        message: "Name of New Role?",
-        validate: function (input) {
-          if (input.trim() === "") {
-            return " Role name cant be blank.";
-          }
-          return true;
-        },
-      },
-      {
-        type: "input",
         name: 'title',
-        message: " Name of new Title role",
+        message: " Name of new Title",
         validate: function (input) {
           if (input.trim() === "") {
             return " New title can not be blank"
@@ -151,20 +140,22 @@ function addRole () {
       }
     ])
     .then((answer) => {
-      const roleName = answer.roleName;
       const title = answer.title;
       const salary = answer.salary;
-      const departmentid = answer.department_id
-      console.log(roleName);
+      const department_id = answer.department_id;
       console.log(title);
       console.log(salary);
-      console.log(departmentid);
-      db.query("INSERT INTO role ( (roleName) (title), (salary),(department_id), VALUES (?,?,?,?)", [roleName],[title],[departmentid],[salary]);
-      console.log("Role Added");
-      console.log("departmentID added")
-      console.log("Salary added")
-      init();
-    })
+      console.log(department_id);
+      db.query("INSERT INTO role ( title, department_id, salary) VALUES (?, ?, ?)", [title, department_id, salary]),
+      (err, result) => {
+        if (err) {
+          console.error("Enter adding role", err);
+          return;
+        }
+        console.log("Role Added");
+        init();
+      }
+    });
   } catch (error){
     console.error("Error adding role", error);
   }

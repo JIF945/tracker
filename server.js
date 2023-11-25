@@ -17,7 +17,7 @@ function init() {
       name: "action",
       type: "list",
       message: "What would you like to do?",
-      choices: ["View All Departments", "Add Departments", "View All Roles", "Add Role"],
+      choices: ["View All Departments", "Add Departments", "View All Roles", "Add Role", "View All Employees"],
     })
     // different cases for each answer
     .then((answer) => {
@@ -33,6 +33,9 @@ function init() {
           break;
         case "Add Role":
           addRole();
+          break;
+        case "View All Employees":
+          viewAllEmployees();
           break;
       }
     });
@@ -82,7 +85,7 @@ function addDepartment() {
     console.error("Cant add department", error);
   }
 }
-// init();
+
 
 function viewAllRoles() {
   // query to select all roles from the roles table. 
@@ -159,6 +162,23 @@ function addRole () {
   } catch (error){
     console.error("Error adding role", error);
   }
+}
+
+
+function viewAllEmployees() {
+  // Query to select all employees from the employee table
+  const query = "SELECT * FROM employee";
+
+  // Execute the query
+  db.query(query, (err, results) => {
+    if(err) {
+      console.error(err);
+      return;
+    }
+    // displaying the employees using console.table
+    console.table(results);
+    init(); 
+  })
 }
 
 init();

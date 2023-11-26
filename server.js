@@ -269,22 +269,18 @@ function modifyEmployee() {
         value: id,
       }));
 
-// function modifyEmployee() {
-//   db.promise()
-//     .query("SELECT * FROM employee")
-//     .then((rows) => {
-//       let employees = rows;
-//       const employeeChoices = employees[0].map(
-//         ({ id, first_name, last_name }) => ({
-//           name: `${first_name} ${last_name}`,
-//           value: id,
-//         }));
+
 
         db.promise()
         .query("SELECT * FROM role")
         .then((rows) => {
           const roles = rows[0];
-          const roleChoices = roles.map(({ title }) => title);
+          const roleChoices = roles.map(({ id, title }) => {
+            return {
+              name: title,
+              value: id
+            }
+          });
 
           try {
             inquirer
@@ -313,7 +309,7 @@ function modifyEmployee() {
                 const newRole = answer.newRole;
 
                 db.query(
-                  "UPDATE employee SET manager_id = ?, role_id = ? WHERE employee_id = ?",
+                  "UPDATE employee SET manager_id = ?, role_id = ? WHERE id = ?",
                   [newManager, newRole, employee],
                   (err, result) => {
                     if (err) {
@@ -332,60 +328,7 @@ function modifyEmployee() {
     });
 }
 
-        // db.promise()
-        // .query("SELECT * FROM role")
-        // .then((rows) => {
-        //   const roles = rows[0];
-        //   // let roles = rows;
-        //   const roleChoices = roles.map(({title})  => ); {
-        //     roleChoices.title;
-        //   });
-        //   console.log(roleChoices);
-        // }),
-
-//       try {
-//         inquirer
-//           .prompt([
-//             {
-//               type: "list",
-//               name: "employee",
-//               message: " select an employee to modify",
-//               choices: employeeChoices,
-//             },
-          
-         
-          
-//             {
-//               type: "input",
-//               name: "newManager",
-//               message: "who's the employes new manager",
-//             },
-//           ])
-//           .then((answer) => {
-//             const employee = answer.employee;
-//             const newManager = answer.manager_id;
-//             const newRole = answer.role_id;
-//             console.log(employee);
-//             console.log(newRole);
-//             console.log(newManager);
-//             db.query(
-//               "UPDATE employee SET manager_id = ?, role_id = ?) WHERE employee_id",
-//               [newManager, newRole],
-//               (err, result) => {
-//                 if (err) {
-//                   console.error("Error modifying employee", err);
-//                   return;
-//                 }
-//                 console.log(" employee modified");
-//                 init();
-//               }
-//             );
-//           });
-//       } catch (error) {
-//         console.error("error modifying employee");
-//       }
-//     });
-// }
+  
 
 init();
 

@@ -258,51 +258,74 @@ function addEmployee() {
 }
 
 function modifyEmployee() {
-  try {
-    inquirer.prompt([
-      {
-        type:"list",
-        name: "employee",
-        message: " select an employee to modify",
-        choices: viewAllEmployees.map(employee => ({
-          name: `${employee.first_name} ${employee.last_name}`
-        }))
-      }, 
-      {
-        type:"list",
-        name: "newRole",
-        message: "what the employes new role",
-        choices: viewAllRoles.map(role => ({
-         name: role.title,
-         values: role_id
-        }))
-      },
-      {
-        type:"input",
-        name: "newManager",
-        message: "who's the employes new manager",
-      },
-    ])
-    .then((answer) => {
-      const employee = answer.employee
-      const newManager= answer.manager_id;
-      const newRole = answer.role_id;
-      console.log( employee);
-      console.log(newRole);
-      console.log(newManager)
-      db.query("INSERT INTO employee (newManager, newRole) VALUES (?, ?)", [newManager,newRole],
-      (err, result) => {
-        if (err) {
-          console.error ("Error modifying employee", err);
-          return;
-        }
-        console.log(" employee modified")
-        init();
-      });
+  db.promise()
+    .query("SELECT * FROM employee")
+    .then((rows) => {
+      let employees = rows;
+      const employeeChoices = employees[0].map(
+        ({ id, first_name, last_name }) => ({
+          name: `${first_name} ${last_name}`,
+          value: id,
+        })
+      );
+      try {
+        inquirer
+          .prompt([
+            {
+              type: "list",
+              name: "employee",
+              message: " select an employee to modify",
+              choices: employeeChoices,
+            },
+          
+          db.promise()
+            .query("SELECT * FROM role")
+            .then((rows) => {
+              let roles = rows;
+              const roleChoices = roles[0].map((value) => {
+                roleChoices.title;
+              });
+              console.log(roleChoices);
+            }),
+            // {
+            //   type: "list",
+            //   name: "newRole",
+            //   message: "what the employes new role",
+            //   choices: viewAllRoles.map((role) => ({
+            //     name: role.title,
+            //     values: role_id,
+            //   })),
+            // },
+            {
+              type: "input",
+              name: "newManager",
+              message: "who's the employes new manager",
+            },
+          ])
+          .then((answer) => {
+            const employee = answer.employee;
+            const newManager = answer.manager_id;
+            const newRole = answer.role_id;
+            console.log(employee);
+            console.log(newRole);
+            console.log(newManager);
+            db.query(
+              "INSERT INTO employee (newManager, newRole) VALUES (?, ?)",
+              [newManager, newRole],
+              (err, result) => {
+                if (err) {
+                  console.error("Error modifying employee", err);
+                  return;
+                }
+                console.log(" employee modified");
+                init();
+              }
+            );
+          });
+      } catch (error) {
+        console.error("error modifying employee");
+      }
     });
-  } catch (error) {
-    console.error( "error modifying employee")
-  }
 }
 
 init();

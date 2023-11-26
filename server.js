@@ -17,7 +17,7 @@ function init() {
       name: "action",
       type: "list",
       message: "What would you like to do?",
-      choices: ["View All Departments", "Add Departments", "View All Roles", "Add Role", "View All Employees", "Add Employee"],
+      choices: ["View All Departments", "Add Departments", "View All Roles", "Add Role", "View All Employees", "Add Employee", "Modify Employee", "Exit"],
     })
     // different cases for each answer
     .then((answer) => {
@@ -39,6 +39,13 @@ function init() {
           break;
         case "Add Employee":
           addEmployee();
+          break;
+          case "Modify Employee":
+          modifyEmployee();
+          break;
+          case "Exit":
+            console.log("Goodbye ");
+            process.exit();
       }
     });
 }
@@ -217,7 +224,7 @@ function addEmployee() {
     {
       type: "input",
       name: "manager_id",
-      message: " whos the employees new manager",
+      message: " whos the employees manager",
       validate: function(input) {
         if (input.trim()=== ""){
           return "manager can not be blank"
@@ -247,6 +254,49 @@ function addEmployee() {
     });
   } catch (error){
     console.error("Error adding employee", error);
+  }
+}
+
+function modifyEmployee() {
+  try {
+    inquirer.prompt([
+      {
+        type:"list",
+        name: "employee",
+        message: " select an employee to modify",
+        choices: db.viewAllEmployees
+      }, 
+      {
+        type:"list",
+        name: "newRole",
+        message: "what the employes new role",
+        choices: db.viewAllRoles
+      },
+      {
+        type:"input",
+        name: "newManager",
+        message: "who's the employes new manager",
+      },
+    ])
+    .then((answer) => {
+      const employee = answer.employee
+      const newManager= answer.manager_id;
+      const newRole = answer.role_id;
+      console.log( employee);
+      console.log(newRole);
+      console.log(newManager)
+      db.query("INSERT INTO employee (newManager, newRole) VALUES (?, ?)", [newManager,newRole],
+      (err, result) => {
+        if (err) {
+          console.error ("Error modifying employee", err);
+          return;
+        }
+        console.log(" employee modified")
+        init();
+      });
+    });
+  } catch (error) {
+    console.error( "error modifying employee")
   }
 }
 

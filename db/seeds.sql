@@ -10,9 +10,9 @@ INSERT INTO role (id, title, salary, department_id)
 VALUES
   (1, 'Supply Chain Manager', 159874, 1),
   (2, 'Biochemist designer', 147852, 2),
-  (3, 'Supply Chain Specialist', 150000, 1),
-  (4, 'Driver', 175000, 1),
-  (5, 'Lottery Winner', 900000, 2);
+  (3, 'Supply Chain Specialist', 150000, 3),
+  (4, 'Driver', 175000, 4),
+  (5, 'Lottery Winner', 900000, 5);
 
 INSERT INTO employee (id, first_name, last_name, role_id, manager_id)
 VALUES

@@ -34,8 +34,8 @@ Developers frequently have to create interfaces that allow non-developers to eas
 
 
 ## Usage
-- run npm install
-- enter npm start or node server.js
+- Run npm install
+- Enter npm start or node server.js
 
 - ![Video Walkthrough]()
   

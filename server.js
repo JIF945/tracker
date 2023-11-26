@@ -264,13 +264,18 @@ function modifyEmployee() {
         type:"list",
         name: "employee",
         message: " select an employee to modify",
-        choices: db.viewAllEmployees
+        choices: viewAllEmployees.map(employee => ({
+          name: `${employee.first_name} ${employee.last_name}`
+        }))
       }, 
       {
         type:"list",
         name: "newRole",
         message: "what the employes new role",
-        choices: db.viewAllRoles
+        choices: viewAllRoles.map(role => ({
+         name: role.title,
+         values: role_id
+        }))
       },
       {
         type:"input",

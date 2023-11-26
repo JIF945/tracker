@@ -37,7 +37,9 @@ Developers frequently have to create interfaces that allow non-developers to eas
 - Run npm install
 - Enter npm start or node server.js
 
-- ![Video Walkthrough]()
+- [Video Walkthrough](https://drive.google.com/file/d/1bLK60T9XJi2oB0PKEmClMTdZp095z_OU/view)
+
+
   
 ```
 WHEN the application starts you'll be presented with the following options: view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
